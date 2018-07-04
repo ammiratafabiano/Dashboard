@@ -164,7 +164,7 @@ export class HomePage {
 
     var id = event.srcElement.parentElement.parentElement.nextElementSibling.innerHTML;
 
-    var index = this.tabs.findIndex(x => x.id == id);
+    var index = this.tabs.findIndex(x => x.id == id); 
 
     let alert = this.alertCtrl.create({
       title: 'Deleting',
