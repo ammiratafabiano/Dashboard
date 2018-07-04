@@ -1,0 +1,167 @@
+.ios, .md {
+
+    page-home {
+
+        .scroll-content {
+            background-color: map-get($colors, light);
+        }
+
+        @media only screen and (min-width: 600px) {
+          ion-list {
+              width: 600px;
+              display: block;
+              float: left;
+          }
+        }
+
+        .clear { clear:both; }
+
+        ion-navbar {
+       }
+
+        ion-title {
+            height: 10pt;
+            margin-top: 5pt;
+            margin-bottom: 2pt;
+            display: block;
+            float: left;
+        }
+
+        #popover ion-icon {
+            color: white;
+        }
+        #popover {
+            display: block;
+            float: right;
+
+            padding: 0;
+
+            background: #f53d3d;
+
+            width: 30pt;
+            height: 30pt;
+        }
+
+        ion-card-header {
+            margin: 0;
+            padding: 2pt;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {background-color:#f5f5f5;}
+
+        .source {
+            padding: 6pt;
+            position: relative;
+            top: 6pt;
+
+            color: lightgrey;
+        }
+
+        .delete, .type ion-icon {
+            color: grey;
+        }
+
+        .topHead {
+            border-bottom: solid lightgrey 1px;
+        }
+
+        .bottomHead {
+
+        }
+
+        .type {
+            display: block;
+            float: right;
+
+            padding: 0;
+
+            background: white;
+
+            width: 30pt;
+            height: 30pt;
+        }
+
+        .delete {
+            display: block;
+            float: right;
+
+            padding: 0;
+
+            background: white;
+
+            width: 30pt;
+            height: 30pt;
+        }
+
+        .description {
+            display: block;
+            float: left;
+
+            padding-left: 6pt;
+            padding-top: 6pt;
+
+            width: 70%;
+
+            font-weight: bold;
+        }
+
+        .settings {
+            display: block;
+            float: left;
+
+            width: 30%;
+        }
+
+        .id {
+          display: none;
+
+        }
+
+        .details {
+          border-top: solid lightgrey 1px;
+          padding-top: 5px;
+          margin-top: 5px;
+        }
+
+        .descriptionDetails {
+            display: block;
+            float: left;
+
+            padding-left: 6pt;
+            padding-top: 6pt;
+
+            font-weight: bold;
+        }
+
+        .resetDetails {
+            display: block;
+            float: right;
+        }
+
+        .detailsDown {
+          display: none;
+        }
+
+        .detailsForm {
+          display: none;
+        }
+
+        .hideButtonDetails {
+          position: relative;
+          top: 6pt;
+          background: white;
+        }
+
+    }
+}

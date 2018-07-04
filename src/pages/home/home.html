@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-navbar color="danger">
+    <ion-title> MyDashboard </ion-title>
+    <button id="popover" icon-only (click)="presentPopover($event)">
+      <ion-icon name="more"></ion-icon>
+    </button>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+<ion-refresher (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+</ion-refresher>
+
+<ion-list *ngFor="let data of tabs;" no-lines>
+
+    <ion-card>
+      <ion-card-header>
+        <div class="topHead">
+          <span class="source">{{ data.source }}</span>
+          <button class="delete" icon-only (click)="deleteTab($event);">
+            <ion-icon name="close"></ion-icon>
+          </button>
+          <div class="clear"></div>
+        </div>
+        <div class="bottomHead">
+          <div class="description">{{ data.description }}</div>
+          <div class="settings">
+            <button class="type" icon-only *ngFor="let options of data.chart.chartOptions;" (click)="updateChart($event);">
+              <ion-icon [name]="options.icon"></ion-icon>
+              <div class="id">{{ options.type }}</div>
+            </button>
+            <!--
+            <button class="favorite" icon-only (click)="favoriteTab($event);">
+              <ion-icon name="star"></ion-icon>
+            </button>
+            -->
+            <div class="clear"></div>
+          </div>
+        </div>
+      </ion-card-header>
+      <div class="id">{{ data.id }}</div>
+      <ion-card-content>
+        <canvas #chart></canvas>
+        <div class="details">
+          <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>
+          <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">
+            <ion-icon class="detailsUp" name="arrow-forward"></ion-icon>
+            <ion-icon class="detailsDown" name="arrow-down"></ion-icon>
+          </button>
+          <div class="detailsForm" *ngIf="data.details.detailsOptions">
+            <div class="paramGroup">
+              <ion-item *ngFor="let details of data.details.detailsOptions;">
+                <ion-label>{{ details.name }}</ion-label>
+                <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">
+                  <ion-option *ngFor="let values of details.values;" [value]="values">{{ values }}</ion-option>
+                </ion-select>
+              </ion-item>
+            </div>
+            <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>
+            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Reset</button>
+            <div *ngIf="data.details.detailsOptions"></div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+
+</ion-list>
+
+</ion-content>
