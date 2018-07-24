@@ -151,7 +151,6 @@ var HomePage = /** @class */ (function () {
                 _this.nTabs = 0;
             }
             else {
-                //window.alert(JSON.stringify(val));
                 _this.tabs = val;
                 if (_this.tabs != undefined)
                     _this.nTabs = _this.tabs.length;
@@ -235,12 +234,13 @@ var HomePage = /** @class */ (function () {
         if (mode == "online") {
             this.http.get("http://192.168.0.114:8080" + tab.url)
                 .subscribe(function (out) {
-                //window.alert(JSON.stringify(out));
+                //window.alert(JSON.stringify(out.details.paramValues));
                 //window.alert(this.memorySizeOf(out));
                 _this.tabs[id].chart.data = out["chart"];
                 _this.drawChart(out["chart"], id, tab.chart.chartOptions);
                 if (out["details"] != undefined) {
                     _this.tabs[id].details.data = out["details"].data;
+                    _this.tabs[id].details.detailsOptions = out["details"].paramValues;
                     //this.drawDetails(out["details"].data, id);
                 }
                 _this.storage.set('tabs', _this.tabs);
@@ -272,8 +272,7 @@ var HomePage = /** @class */ (function () {
             label = "# of " + options.label;
         }
         var canvas = this.components.toArray()[idItem].nativeElement;
-        //if (this.barChart) this.barChart.destroy();
-        this.barChart = new __WEBPACK_IMPORTED_MODULE_3_chart_js__["Chart"](canvas, {
+        var newChart = new __WEBPACK_IMPORTED_MODULE_3_chart_js__["Chart"](canvas, {
             type: type,
             data: {
                 labels: keys,
@@ -304,6 +303,10 @@ var HomePage = /** @class */ (function () {
         var data = this.tabs.filter(function (x) { return x.id == id; })[0].chart.data;
         var chartOptions = this.tabs.filter(function (x) { return x.id == id; })[0].chart.chartOptions;
         var selectedOptions = chartOptions.filter(function (x) { return x.type == type; });
+        this.tabs.filter(function (x) { return x.id == id; })[0].chart.chartOptions.forEach(function (element) {
+            element.selected = 0;
+        });
+        this.tabs.filter(function (x) { return x.id == id; })[0].chart.chartOptions.filter(function (x) { return x.type == type; })[0].selected = 1;
         this.drawChart(data, index, selectedOptions);
     };
     /*
@@ -361,57 +364,74 @@ var HomePage = /** @class */ (function () {
         var id;
         var values = [];
         var count;
-        var params;
+        var params = [];
         var details;
+        var hideButton;
+        var error = 0;
         if (event.srcElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling != undefined) {
             id = event.srcElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling.innerHTML;
         }
         else {
             id = event.srcElement.parentElement.parentElement.parentElement.previousElementSibling.innerHTML;
         }
-        if (event.srcElement.parentElement.previousElementSibling.className == "paramGroup") {
-            count = event.srcElement.parentElement.previousElementSibling.childElementCount;
-            params = event.srcElement.parentElement.previousElementSibling.childNodes;
-            details = event.srcElement.parentElement.nextElementSibling.nextElementSibling;
-        }
-        else {
-            count = event.srcElement.previousElementSibling.childElementCount;
-            params = event.srcElement.previousElementSibling.childNodes;
-            details = event.srcElement.nextElementSibling.nextElementSibling;
-        }
-        params.forEach(function (element) {
-            if (element.tagName == "ION-ITEM") {
-                if (element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML != "") {
-                    values.push(parseInt(element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML));
+        var currentTab = this.tabs.filter(function (x) { return x.id == id; })[0];
+        currentTab.details.detailsOptions.forEach(function (element) {
+            if (element.filter == 1) {
+                if (element.paramName != element.name) {
+                    values.push(element.elements.filter(function (x) { return x.name == element.paramName; })[0].id);
+                }
+                else {
+                    error = 1;
                 }
             }
         });
-        if (JSON.stringify(values) != "[]") {
-            if (count == values.length) {
-                var temp;
-                for (var i = 0; i != values.length; i++) {
-                    temp = this.tabs;
-                    temp = temp.filter(function (x) { return x.id == id; })[0].details.data.filter(function (x) { return x.params[i] == values[i]; });
-                }
-                details.innerHTML = "";
-                details.appendChild(this.json2Table(temp[0].data));
-            }
-            else {
-                this.popup("Missing params. Please insert them all.");
-            }
+        if (event.srcElement.parentElement.previousElementSibling.className == "paramGroup") {
+            //count = event.srcElement.parentElement.previousElementSibling.childElementCount;
+            //params = event.srcElement.parentElement.previousElementSibling.childNodes;
+            details = event.srcElement.parentElement.nextElementSibling.nextElementSibling;
+            hideButton = event.srcElement.parentElement.nextElementSibling;
         }
         else {
-            this.popup("Please insert parameters.");
+            //count = event.srcElement.previousElementSibling.childElementCount;
+            //params = event.srcElement.previousElementSibling.childNodes;
+            details = event.srcElement.nextElementSibling.nextElementSibling;
+            hideButton = event.srcElement.nextElementSibling;
+        }
+        params.forEach(function (element) {
+            if (element.tagName == "ION-ITEM") {
+                if (element.firstElementChild.firstElementChild.firstElementChild.innerHTML == 0) {
+                    count -= 1;
+                }
+                else {
+                    if (element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML != "") {
+                        values.push(parseInt(element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML));
+                    }
+                }
+            }
+        });
+        if (!error) {
+            var temp;
+            for (var i = 0; i != values.length; i++) {
+                temp = this.tabs;
+                temp = temp.filter(function (x) { return x.id == id; })[0].details.data.filter(function (x) { return x.params[i] == values[i]; });
+            }
+            details.innerHTML = "";
+            details.appendChild(this.json2Table(temp[0].data));
+            hideButton.style.display = "block";
+        }
+        else {
+            this.popup("Missing params. Please insert them all.");
         }
     };
     HomePage.prototype.resetDetails = function (event) {
-        console.log(event);
         var details;
         if (event.srcElement.parentElement.previousElementSibling.previousElementSibling.className == "paramGroup") {
             details = event.srcElement.parentElement.nextElementSibling;
+            event.srcElement.parentElement.style.display = "none";
         }
         else {
             details = event.srcElement.nextElementSibling;
+            event.srcElement.style.display = "none";
         }
         details.innerHTML = "";
     };
@@ -499,19 +519,20 @@ var HomePage = /** @class */ (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_9" /* ViewChildren */])('chart'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */])
+        __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */]) === "function" && _a || Object)
     ], HomePage.prototype, "components", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_9" /* ViewChildren */])('details'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */])
+        __metadata("design:type", typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */]) === "function" && _b || Object)
     ], HomePage.prototype, "components2", void 0);
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-home',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar color="danger">\n    <ion-title> MyDashboard </ion-title>\n    <button id="popover" icon-only (click)="presentPopover($event)">\n      <ion-icon name="more"></ion-icon>\n    </button>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n\n<ion-refresher (ionRefresh)="refresh($event)">\n    <ion-refresher-content></ion-refresher-content>\n</ion-refresher>\n\n<ion-list *ngFor="let data of tabs;" no-lines>\n\n    <ion-card>\n      <ion-card-header>\n        <div class="topHead">\n          <span class="source">{{ data.source }}</span>\n          <button class="delete" icon-only (click)="deleteTab($event);">\n            <ion-icon name="close"></ion-icon>\n          </button>\n          <div class="clear"></div>\n        </div>\n        <div class="bottomHead">\n          <div class="description">{{ data.description }}</div>\n          <div class="settings">\n            <button class="type" icon-only *ngFor="let options of data.chart.chartOptions;" (click)="updateChart($event);">\n              <ion-icon [name]="options.icon"></ion-icon>\n              <div class="id">{{ options.type }}</div>\n            </button>\n            <!--\n            <button class="favorite" icon-only (click)="favoriteTab($event);">\n              <ion-icon name="star"></ion-icon>\n            </button>\n            -->\n            <div class="clear"></div>\n          </div>\n        </div>\n      </ion-card-header>\n      <div class="id">{{ data.id }}</div>\n      <ion-card-content>\n        <canvas #chart></canvas>\n        <div class="details">\n          <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>\n          <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">\n            <ion-icon class="detailsUp" name="arrow-forward"></ion-icon>\n            <ion-icon class="detailsDown" name="arrow-down"></ion-icon>\n          </button>\n          <div class="detailsForm" *ngIf="data.details.detailsOptions">\n            <div class="paramGroup">\n              <ion-item *ngFor="let details of data.details.detailsOptions;">\n                <ion-label>{{ details.name }}</ion-label>\n                <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                  <ion-option *ngFor="let values of details.values;" [value]="values">{{ values }}</ion-option>\n                </ion-select>\n              </ion-item>\n            </div>\n            <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>\n            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Reset</button>\n            <div *ngIf="data.details.detailsOptions"></div>\n          </div>\n        </div>\n      </ion-card-content>\n    </ion-card>\n\n\n</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/
+            selector: 'page-home',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar color="danger">\n    <ion-title> MyDashboard </ion-title>\n    <button id="popover" icon-only (click)="presentPopover($event)">\n      <ion-icon name="more"></ion-icon>\n    </button>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n\n<ion-refresher (ionRefresh)="refresh($event)">\n    <ion-refresher-content></ion-refresher-content>\n</ion-refresher>\n\n<ion-list *ngFor="let data of tabs;" no-lines>\n\n    <ion-card>\n      <ion-card-header>\n        <div class="topHead">\n          <span class="source">{{ data.source }}</span>\n          <button class="delete" icon-only (click)="deleteTab($event);">\n            <ion-icon name="close"></ion-icon>\n          </button>\n          <div class="clear"></div>\n        </div>\n        <div class="bottomHead">\n          <div class="description">{{ data.description }}</div>\n          <div class="settings">\n            <ng-container *ngFor="let options of data.chart.chartOptions;">\n              <button class="typeSelected" icon-only *ngIf="options.selected==1" (click)="updateChart($event);">\n                <ion-icon class="iconTypeSelected" [name]="options.icon"></ion-icon>\n                <div class="id">{{ options.type }}</div>\n              </button>\n              <button class="type" icon-only *ngIf="options.selected==0" (click)="updateChart($event);">\n                <ion-icon class="iconType" [name]="options.icon"></ion-icon>\n                <div class="id">{{ options.type }}</div>\n              </button>\n            </ng-container>\n            <div class="clear"></div>\n          </div>\n        </div>\n      </ion-card-header>\n      <div class="id">{{ data.id }}</div>\n      <ion-card-content>\n        <canvas #chart></canvas>\n        <div class="details">\n          <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>\n          <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">\n            <ion-icon class="detailsUp" name="arrow-forward"></ion-icon>\n            <ion-icon class="detailsDown" name="arrow-down"></ion-icon>\n          </button>\n          <div class="detailsForm" *ngIf="data.details.detailsOptions">\n            <div class="paramGroup">\n              <ng-container *ngFor="let details of data.details.detailsOptions;">\n                <ion-item *ngIf="details.dependence==1">\n                  <ion-label>{{ details.name }}</ion-label>\n                  <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                    <ng-container *ngFor="let element of details.elements;">\n                      <ng-container *ngIf="element.enable==1">\n                        <ion-option *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                      <ng-container *ngIf="element.enable==0">\n                        <ion-option disabled *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ng-container>\n                  </ion-select>\n                </ion-item>\n                <ng-container *ngIf="details.dependence==0">\n                  <ion-item *ngIf="details.independence==0">\n                    <ion-label>{{ details.name }}</ion-label>\n                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                      <ng-container *ngFor="let element of details.elements;">\n                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>\n                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ion-select>\n                  </ion-item>\n                  <ion-item *ngIf="details.independence==1">\n                    <ion-label>{{ details.name }}</ion-label>\n                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                      <ng-container *ngFor="let element of details.elements;">\n                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>\n                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ion-select>\n                  </ion-item>\n                </ng-container>\n              </ng-container>\n            </div>\n            <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>\n            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Hide</button>\n            <div *ngIf="data.details.detailsOptions"></div>\n          </div>\n        </div>\n      </ion-card-content>\n    </ion-card>\n\n\n</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* PopoverController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClient */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */]])
+        __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* PopoverController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* PopoverController */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClient */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */]) === "function" && _h || Object, typeof (_j = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */]) === "function" && _j || Object])
     ], HomePage);
     return HomePage;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
 }());
 
 //# sourceMappingURL=home.js.map
@@ -544,7 +565,7 @@ var PopoverContentPage = /** @class */ (function () {
         this.viewCtrl.dismiss(id);
     };
     PopoverContentPage = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/home/popover.html"*/'<ion-list>\n      <ion-list-header color="danger">Actions</ion-list-header>\n      <button ion-item (click)="close(1)">Add a tab</button>\n</ion-list>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/home/popover.html"*/
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/home/popover.html"*/'<ion-list>\n      <ion-list-header color="danger">\n        Actions\n        <button id="popover2" icon-only (click)="close(0)">\n          <ion-icon name="more"></ion-icon>\n        </button>\n      </ion-list-header>\n      <button ion-item (click)="close(1)">Add a tab</button>\n</ion-list>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/home/popover.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* ViewController */]])
     ], PopoverContentPage);

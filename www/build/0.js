@@ -78,8 +78,8 @@ var AddTabModalPage = /** @class */ (function () {
         var _this = this;
         this.http.get("http://192.168.0.114:8080/available")
             .subscribe(function (data) {
-            //window.alert(JSON.stringify(data));
             _this.availableTabs = data;
+            console.log(data);
             document.getElementById("tabChoice").style.display = "block";
         }, function (error) {
             var alert = _this.alertCtrl.create({

@@ -25763,6 +25763,23 @@ ion-navbar.toolbar {
   height: 30pt;
 }
 
+.ios page-home .typeSelected, .md page-home .typeSelected {
+  display: block;
+  float: right;
+  padding: 0;
+  background: white;
+  width: 30pt;
+  height: 30pt;
+}
+
+.ios page-home .iconType, .md page-home .iconType {
+  color: grey;
+}
+
+.ios page-home .iconTypeSelected, .md page-home .iconTypeSelected {
+  color: #f53d3d;
+}
+
 .ios page-home .delete, .md page-home .delete {
   display: block;
   float: right;
@@ -25806,7 +25823,7 @@ ion-navbar.toolbar {
 }
 
 .ios page-home .resetDetails, .md page-home .resetDetails {
-  display: block;
+  display: none;
   float: right;
 }
 
@@ -25822,4 +25839,20 @@ ion-navbar.toolbar {
   position: relative;
   top: 6pt;
   background: white;
+}
+
+#popover2 ion-icon {
+  color: white;
+}
+
+#popover2 {
+  display: block;
+  float: right;
+  padding: 0;
+  position: relative;
+  right: -2vh;
+  top: -1.5vh;
+  background: #f53d3d;
+  width: 30pt;
+  height: 30pt;
 }

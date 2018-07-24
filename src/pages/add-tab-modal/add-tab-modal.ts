@@ -31,8 +31,8 @@ export class AddTabModalPage {
     this.http.get("http://192.168.0.114:8080/available")
       .subscribe(
         data => {
-          //window.alert(JSON.stringify(data));
           this.availableTabs = data;
+          console.log(data);
           document.getElementById("tabChoice").style.display = "block";
         },
         error => {

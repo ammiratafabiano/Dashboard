@@ -27,15 +27,16 @@
         <div class="bottomHead">
           <div class="description">{{ data.description }}</div>
           <div class="settings">
-            <button class="type" icon-only *ngFor="let options of data.chart.chartOptions;" (click)="updateChart($event);">
-              <ion-icon [name]="options.icon"></ion-icon>
-              <div class="id">{{ options.type }}</div>
-            </button>
-            <!--
-            <button class="favorite" icon-only (click)="favoriteTab($event);">
-              <ion-icon name="star"></ion-icon>
-            </button>
-            -->
+            <ng-container *ngFor="let options of data.chart.chartOptions;">
+              <button class="typeSelected" icon-only *ngIf="options.selected==1" (click)="updateChart($event);">
+                <ion-icon class="iconTypeSelected" [name]="options.icon"></ion-icon>
+                <div class="id">{{ options.type }}</div>
+              </button>
+              <button class="type" icon-only *ngIf="options.selected==0" (click)="updateChart($event);">
+                <ion-icon class="iconType" [name]="options.icon"></ion-icon>
+                <div class="id">{{ options.type }}</div>
+              </button>
+            </ng-container>
             <div class="clear"></div>
           </div>
         </div>
@@ -51,15 +52,44 @@
           </button>
           <div class="detailsForm" *ngIf="data.details.detailsOptions">
             <div class="paramGroup">
-              <ion-item *ngFor="let details of data.details.detailsOptions;">
-                <ion-label>{{ details.name }}</ion-label>
-                <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">
-                  <ion-option *ngFor="let values of details.values;" [value]="values">{{ values }}</ion-option>
-                </ion-select>
-              </ion-item>
+              <ng-container *ngFor="let details of data.details.detailsOptions;">
+                <ion-item *ngIf="details.dependence==1">
+                  <ion-label>{{ details.name }}</ion-label>
+                  <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">
+                    <ng-container *ngFor="let element of details.elements;">
+                      <ng-container *ngIf="element.enable==1">
+                        <ion-option *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>
+                      </ng-container>
+                      <ng-container *ngIf="element.enable==0">
+                        <ion-option disabled *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>
+                      </ng-container>
+                    </ng-container>
+                  </ion-select>
+                </ion-item>
+                <ng-container *ngIf="details.dependence==0">
+                  <ion-item *ngIf="details.independence==0">
+                    <ion-label>{{ details.name }}</ion-label>
+                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">
+                      <ng-container *ngFor="let element of details.elements;">
+                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>
+                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>
+                      </ng-container>
+                    </ion-select>
+                  </ion-item>
+                  <ion-item *ngIf="details.independence==1">
+                    <ion-label>{{ details.name }}</ion-label>
+                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">
+                      <ng-container *ngFor="let element of details.elements;">
+                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>
+                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>
+                      </ng-container>
+                    </ion-select>
+                  </ion-item>
+                </ng-container>
+              </ng-container>
             </div>
             <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>
-            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Reset</button>
+            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Hide</button>
             <div *ngIf="data.details.detailsOptions"></div>
           </div>
         </div>

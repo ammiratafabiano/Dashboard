@@ -21,7 +21,8 @@ export class HomePage {
   @ViewChildren('chart') components:QueryList<any>;
   @ViewChildren('details') components2:QueryList<any>;
 
-  barChart: Chart;
+  barCharts: Chart;
+  lineCharts: Chart;
   startup;
   tabs;
   nTabs;
@@ -115,7 +116,6 @@ export class HomePage {
 				this.nTabs = 0;
 			}
 			else {
-				//window.alert(JSON.stringify(val));
 				this.tabs = val;
 				if (this.tabs != undefined)
 					this.nTabs = this.tabs.length;
@@ -218,12 +218,13 @@ export class HomePage {
       this.http.get("http://192.168.0.114:8080"+tab.url)
         .subscribe(
           out => {
-            //window.alert(JSON.stringify(out));
+            //window.alert(JSON.stringify(out.details.paramValues));
             //window.alert(this.memorySizeOf(out));
             this.tabs[id].chart.data = out["chart"];
             this.drawChart(out["chart"], id, tab.chart.chartOptions);
             if (out["details"] != undefined) {
               this.tabs[id].details.data = out["details"].data;
+              this.tabs[id].details.detailsOptions = out["details"].paramValues;
               //this.drawDetails(out["details"].data, id);
             }
             this.storage.set('tabs', this.tabs);
@@ -265,9 +266,7 @@ export class HomePage {
 
     var canvas = this.components.toArray()[idItem].nativeElement;
 
-    //if (this.barChart) this.barChart.destroy();
-
-    this.barChart = new Chart(canvas, {
+    var newChart = new Chart(canvas, {
 
       type: type,
       data: {
@@ -289,7 +288,8 @@ export class HomePage {
                                   }]
                         }
                 }
-      });
+    });
+    
   }
 
   updateChart(event: any) {
@@ -303,6 +303,12 @@ export class HomePage {
     var chartOptions = this.tabs.filter(x => x.id == id)[0].chart.chartOptions;
 
     var selectedOptions = chartOptions.filter(x => x.type == type);
+    
+    this.tabs.filter(x => x.id == id)[0].chart.chartOptions.forEach(function(element){
+      element.selected=0;
+    });
+    
+    this.tabs.filter(x => x.id == id)[0].chart.chartOptions.filter(x => x.type == type)[0].selected = 1;
 
     this.drawChart(data, index, selectedOptions);
   }
@@ -366,8 +372,10 @@ export class HomePage {
     var id;
     var values = [];
     var count;
-    var params;
+    var params = [];
     var details;
+    var hideButton;
+    var error = 0;
 
     if (event.srcElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling != undefined) {
       id = event.srcElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling.innerHTML;
@@ -375,58 +383,78 @@ export class HomePage {
     else {
       id = event.srcElement.parentElement.parentElement.parentElement.previousElementSibling.innerHTML;
     }
+    
+    var currentTab = this.tabs.filter(x => x.id == id)[0];
+    
+    currentTab.details.detailsOptions.forEach(function(element){
+      if (element.filter==1) {
+        if (element.paramName != element.name) {
+          values.push(element.elements.filter(x => x.name == element.paramName)[0].id);
+        }
+        else {
+          error = 1;
+        }
+      }
+    });
+    
 
     if (event.srcElement.parentElement.previousElementSibling.className == "paramGroup") {
-      count = event.srcElement.parentElement.previousElementSibling.childElementCount;
-      params = event.srcElement.parentElement.previousElementSibling.childNodes;
+      //count = event.srcElement.parentElement.previousElementSibling.childElementCount;
+      //params = event.srcElement.parentElement.previousElementSibling.childNodes;
       details = event.srcElement.parentElement.nextElementSibling.nextElementSibling;
+      hideButton = event.srcElement.parentElement.nextElementSibling;
+      
     }
     else {
-      count = event.srcElement.previousElementSibling.childElementCount;
-      params = event.srcElement.previousElementSibling.childNodes;
+      //count = event.srcElement.previousElementSibling.childElementCount;
+      //params = event.srcElement.previousElementSibling.childNodes;
       details = event.srcElement.nextElementSibling.nextElementSibling;
+      hideButton = event.srcElement.nextElementSibling;
     }
 
     params.forEach(function(element) {
         if (element.tagName == "ION-ITEM") {
-          if (element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML != "") {
-            values.push(parseInt(element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML));
+          if (element.firstElementChild.firstElementChild.firstElementChild.innerHTML == 0) {
+            count -= 1;
+          }
+          else {
+            if (element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML != "") {
+              values.push(parseInt(element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML));            }
           }
         }
     });
+    
+    if (!error) {
 
-    if (JSON.stringify(values) != "[]") {
+      var temp;
 
-      if (count == values.length) {
-        var temp;
-
-        for (var i = 0; i != values.length; i++) {
-          temp = this.tabs;
-          temp = temp.filter(x => x.id == id)[0].details.data.filter(x => x.params[i] == values[i]);
-        }
-        details.innerHTML = "";
-        details.appendChild(this.json2Table(temp[0].data));
+      for (var i = 0; i != values.length; i++) {
+        temp = this.tabs;
+        temp = temp.filter(x => x.id == id)[0].details.data.filter(x => x.params[i] == values[i]);
       }
-      else {
-        this.popup("Missing params. Please insert them all.");
-      }
+      details.innerHTML = "";
+      details.appendChild(this.json2Table(temp[0].data));
+      hideButton.style.display = "block";
+      
     }
     else {
-      this.popup("Please insert parameters.");
+      this.popup("Missing params. Please insert them all.");
     }
+
   }
 
   resetDetails(event) {
 
-    console.log(event);
-
     var details;
     if (event.srcElement.parentElement.previousElementSibling.previousElementSibling.className == "paramGroup") {
       details = event.srcElement.parentElement.nextElementSibling;
+      event.srcElement.parentElement.style.display = "none";
     }
     else {
       details = event.srcElement.nextElementSibling;
+      event.srcElement.style.display = "none";
     }
+
     details.innerHTML = "";
   }
 

@@ -1,4 +1,9 @@
 <ion-list>
-      <ion-list-header color="danger">Actions</ion-list-header>
+      <ion-list-header color="danger">
+        Actions
+        <button id="popover2" icon-only (click)="close(0)">
+          <ion-icon name="more"></ion-icon>
+        </button>
+      </ion-list-header>
       <button ion-item (click)="close(1)">Add a tab</button>
 </ion-list>

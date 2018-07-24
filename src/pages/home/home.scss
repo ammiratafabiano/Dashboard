@@ -92,6 +92,26 @@
             height: 30pt;
         }
 
+        .typeSelected {
+            display: block;
+            float: right;
+
+            padding: 0;
+
+            background: white;
+
+            width: 30pt;
+            height: 30pt;
+        }
+        
+        .iconType {
+          color: grey;
+        }
+
+        .iconTypeSelected {
+          color: #f53d3d;
+        }
+
         .delete {
             display: block;
             float: right;
@@ -145,7 +165,7 @@
         }
 
         .resetDetails {
-            display: block;
+            display: none;
             float: right;
         }
 
