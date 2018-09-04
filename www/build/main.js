@@ -410,10 +410,10 @@ var HomePage = /** @class */ (function () {
             }
         });
         if (!error) {
-            var temp;
+            var temp = this.tabs.filter(function (x) { return x.id == id; })[0].details.data;
+            // console.log(temp);
             for (var i = 0; i != values.length; i++) {
-                temp = this.tabs;
-                temp = temp.filter(function (x) { return x.id == id; })[0].details.data.filter(function (x) { return x.params[i] == values[i]; });
+                temp = temp.filter(function (x) { return x.params[i] == values[i]; });
             }
             details.innerHTML = "";
             details.appendChild(this.json2Table(temp[0].data));

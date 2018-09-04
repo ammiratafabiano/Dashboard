@@ -1,0 +1,6 @@
+{
+    "Security.framework": 2,
+    "SystemConfiguration.framework": 1,
+    "libz.tbd": 2,
+    "WebKit.framework": 1
+}

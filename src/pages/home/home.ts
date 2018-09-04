@@ -242,7 +242,7 @@ export class HomePage {
   drawChart(data, idItem, options) {
 
     var keys = new Array(data.length);
-
+  
     for(let i=0; i!=data.length ; i++) {
       keys[i]=data[i].id;
     }
@@ -426,12 +426,13 @@ export class HomePage {
     
     if (!error) {
 
-      var temp;
+      var temp = this.tabs.filter(x => x.id == id)[0].details.data;
 
+      // console.log(temp);
       for (var i = 0; i != values.length; i++) {
-        temp = this.tabs;
-        temp = temp.filter(x => x.id == id)[0].details.data.filter(x => x.params[i] == values[i]);
+        temp = temp.filter(x => x.params[i] == values[i]);
       }
+      
       details.innerHTML = "";
       details.appendChild(this.json2Table(temp[0].data));
       hideButton.style.display = "block";

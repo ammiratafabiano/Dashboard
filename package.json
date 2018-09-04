@@ -42,7 +42,8 @@
     "node-unique": "^1.1.0",
     "rxjs": "5.5.8",
     "sw-toolbox": "3.6.0",
-    "zone.js": "0.8.20"
+    "zone.js": "0.8.20",
+    "cordova-ios": "~4.5.5"
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.1.8",
@@ -61,7 +62,8 @@
       "cordova-plugin-uniquedeviceid": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
