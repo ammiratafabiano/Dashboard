@@ -70,6 +70,7 @@
                   <ion-item *ngIf="details.independence==0">
                     <ion-label>{{ details.name }}</ion-label>
                     <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">
+                      <ion-option [value]="all">All</ion-option>
                       <ng-container *ngFor="let element of details.elements;">
                         <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>
                         <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>
@@ -89,8 +90,9 @@
               </ng-container>
             </div>
             <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>
-            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Hide</button>
+            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Reset</button>
             <div *ngIf="data.details.detailsOptions"></div>
+            <button class ="exportDetails" *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="openIn($event);">Export</button>
           </div>
         </div>
       </ion-card-content>

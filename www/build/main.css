@@ -25827,6 +25827,11 @@ ion-navbar.toolbar {
   float: right;
 }
 
+.ios page-home .exportDetails, .md page-home .exportDetails {
+  display: none;
+  float: right;
+}
+
 .ios page-home .detailsDown, .md page-home .detailsDown {
   display: none;
 }

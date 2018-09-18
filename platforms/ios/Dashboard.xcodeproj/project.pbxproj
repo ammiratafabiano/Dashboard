@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00A55419DE4B48E7A89FEABD /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E258CFCBD1734B438B668CD1 /* SystemConfiguration.framework */; };
 		01EC6DBF0AA44E4EB4241301 /* CDVWKWebViewEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 732BE7EB5F4440E1AD702AD1 /* CDVWKWebViewEngine.m */; };
@@ -55,6 +54,10 @@
 		ECD9B33F28774E5798351834 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AD5297AC3F147FDA873177C /* GCDWebServerErrorResponse.m */; };
 		EEFF877CB48849138A248C50 /* CDVSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = DAAF0FF65D5E416888E05316 /* CDVSplashScreen.m */; };
 		F11D8E537CC8484C94BA3C47 /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = D2FD01E6D7104BC88D307576 /* CDVAssetLibraryFilesystem.m */; };
+		E104C7F0D01941C49FEB954B /* NSString+SSURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A021F4F095642C6AB6A3B00 /* NSString+SSURLEncoding.m */; };
+		C49D2EEAE83047DC9B55469E /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D132866D15D48BE87156EBD /* SocialSharing.m */; };
+		92192E2D00394ED8B8372460 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9E17D0355D645019FD093D7 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		AAA7E1A8C7F54BC09DD393CA /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDD475F0BC2474085898B57 /* MessageUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -183,6 +186,12 @@
 		F90D063D3BBF419591BC784F /* GCDWebServerMultiPartFormRequest.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerMultiPartFormRequest.m; path = "cordova-plugin-ionic-webview/GCDWebServerMultiPartFormRequest.m"; sourceTree = "<group>"; };
 		FC4FD58C1248450792202196 /* GCDWebServerRequest.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerRequest.m; path = "cordova-plugin-ionic-webview/GCDWebServerRequest.m"; sourceTree = "<group>"; };
 		FE67F799427A4235AACA4705 /* CDVWKWebViewEngine.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVWKWebViewEngine.h; path = "cordova-plugin-ionic-webview/CDVWKWebViewEngine.h"; sourceTree = "<group>"; };
+		8A021F4F095642C6AB6A3B00 /* NSString+SSURLEncoding.m */ = {isa = PBXFileReference; name = "NSString+SSURLEncoding.m"; path = "cordova-plugin-x-socialsharing/NSString+SSURLEncoding.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		2D132866D15D48BE87156EBD /* SocialSharing.m */ = {isa = PBXFileReference; name = "SocialSharing.m"; path = "cordova-plugin-x-socialsharing/SocialSharing.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		8EC4E6E9E2C34330BFF9FBD8 /* NSString+SSURLEncoding.h */ = {isa = PBXFileReference; name = "NSString+SSURLEncoding.h"; path = "cordova-plugin-x-socialsharing/NSString+SSURLEncoding.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		65D66BBE7C484C749B9759D3 /* SocialSharing.h */ = {isa = PBXFileReference; name = "SocialSharing.h"; path = "cordova-plugin-x-socialsharing/SocialSharing.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		E9E17D0355D645019FD093D7 /* Social.framework */ = {isa = PBXFileReference; name = "Social.framework"; path = "System/Library/Frameworks/Social.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		5DDD475F0BC2474085898B57 /* MessageUI.framework */ = {isa = PBXFileReference; name = "MessageUI.framework"; path = "System/Library/Frameworks/MessageUI.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +204,8 @@
 				00A55419DE4B48E7A89FEABD /* SystemConfiguration.framework in Frameworks */,
 				B4E9FB408D874800BD3013F2 /* libz.tbd in Frameworks */,
 				7E949E9BF98A49EC94D72E89 /* WebKit.framework in Frameworks */,
+				92192E2D00394ED8B8372460 /* Social.framework in Frameworks */,
+				AAA7E1A8C7F54BC09DD393CA /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +280,8 @@
 				E258CFCBD1734B438B668CD1 /* SystemConfiguration.framework */,
 				D970021C595B47B281031D9C /* libz.tbd */,
 				F36B18E2EAF3453B8396EEF3 /* WebKit.framework */,
+				E9E17D0355D645019FD093D7 /* Social.framework */,
+				5DDD475F0BC2474085898B57 /* MessageUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -372,6 +385,10 @@
 				C3E5CCD1E7F345C28FD4B7AE /* SQLitePlugin.h */,
 				0B95CD1FCF464899871ACA14 /* PSPDFThreadSafeMutableDictionary.h */,
 				85EF8B20D1EF4D0BAACEFEE9 /* sqlite3.h */,
+				8A021F4F095642C6AB6A3B00 /* NSString+SSURLEncoding.m */,
+				2D132866D15D48BE87156EBD /* SocialSharing.m */,
+				8EC4E6E9E2C34330BFF9FBD8 /* NSString+SSURLEncoding.h */,
+				65D66BBE7C484C749B9759D3 /* SocialSharing.h */,
 			);
 			name = Plugins;
 			path = Dashboard/Plugins;
@@ -536,6 +553,8 @@
 				276B7D52BD5148989028EF7A /* SQLitePlugin.m in Sources */,
 				6DDD9B30C1234F51905893E2 /* PSPDFThreadSafeMutableDictionary.m in Sources */,
 				45857EB3C00241738077ECCD /* sqlite3.c in Sources */,
+				E104C7F0D01941C49FEB954B /* NSString+SSURLEncoding.m in Sources */,
+				C49D2EEAE83047DC9B55469E /* SocialSharing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

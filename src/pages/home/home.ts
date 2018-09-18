@@ -8,6 +8,8 @@ import { PopoverContentPage } from './popover';
 import { Chart } from 'chart.js';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import * as papa from 'papaparse';
 
 declare var require: any
 
@@ -30,9 +32,10 @@ export class HomePage {
   selectedChoice;
 
   unique = require('node-unique');
+  converter = require('json-2-csv');
 
 
-  constructor(public loadingCtrl: LoadingController, public popoverCtrl: PopoverController, public navCtrl: NavController, public alertCtrl: AlertController, private http: HttpClient, private storage: Storage, private modal: ModalController) {
+  constructor(public loadingCtrl: LoadingController, public popoverCtrl: PopoverController, public navCtrl: NavController, public alertCtrl: AlertController, private http: HttpClient, private storage: Storage, private modal: ModalController, private socialSharing: SocialSharing) {
 
   }
 
@@ -239,8 +242,14 @@ export class HomePage {
     }
   }
 
-  drawChart(data, idItem, options) {
-
+  drawChart(data, idItem, options, variable?) {
+    
+    if (variable != undefined) {
+      console.log(data);
+      data = data.filter(x => x.variable == variable);
+      console.log(data);
+    }
+    
     var keys = new Array(data.length);
   
     for(let i=0; i!=data.length ; i++) {
@@ -252,6 +261,9 @@ export class HomePage {
     for(let i=0; i!=data.length ; i++) {
       values[i]=data[i].log;
     }
+    
+    values = values.slice(0,15);
+    keys = keys.slice(0,15);
 
     var type;
     var label
@@ -368,13 +380,13 @@ export class HomePage {
   }
 
   drawDetails(event) {
-
+    
     var id;
     var values = [];
     var count;
     var params = [];
     var details;
-    var hideButton;
+    var hideButton, exportButton;
     var error = 0;
 
     if (event.srcElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling != undefined) {
@@ -385,11 +397,21 @@ export class HomePage {
     }
     
     var currentTab = this.tabs.filter(x => x.id == id)[0];
-    
-    currentTab.details.detailsOptions.forEach(function(element){
+    var index = this.tabs.findIndex(x => x.id == id);
+            
+    currentTab.details.detailsOptions.forEach( (element) => {
       if (element.filter==1) {
         if (element.paramName != element.name) {
-          values.push(element.elements.filter(x => x.name == element.paramName)[0].id);
+          if (element.paramName != "All") {
+            var temp = element.elements.filter(x => x.name == element.paramName)[0].id
+            values.push(temp);
+            if (element.chartUpdater == 1) {
+              this.drawChart(currentTab.chart.data, index, currentTab.chart.chartOptions, temp);
+            }
+          }
+          else {
+            values.push(99999);
+          }
         }
         else {
           error = 1;
@@ -403,6 +425,7 @@ export class HomePage {
       //params = event.srcElement.parentElement.previousElementSibling.childNodes;
       details = event.srcElement.parentElement.nextElementSibling.nextElementSibling;
       hideButton = event.srcElement.parentElement.nextElementSibling;
+      exportButton = event.srcElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
       
     }
     else {
@@ -410,6 +433,7 @@ export class HomePage {
       //params = event.srcElement.previousElementSibling.childNodes;
       details = event.srcElement.nextElementSibling.nextElementSibling;
       hideButton = event.srcElement.nextElementSibling;
+      exportButton = event.srcElement.nextElementSibling.nextElementSibling.nextElementSibling;
     }
 
     params.forEach(function(element) {
@@ -427,15 +451,27 @@ export class HomePage {
     if (!error) {
 
       var temp = this.tabs.filter(x => x.id == id)[0].details.data;
-
-      // console.log(temp);
+      
       for (var i = 0; i != values.length; i++) {
-        temp = temp.filter(x => x.params[i] == values[i]);
+        if (values[i] != 99999) {
+          temp = temp.filter(x => x.params[i] == values[i]);
+        }
+        else {
+          var newTemp = {data:[], params: values};
+          temp.forEach(function(element){
+            element.data.forEach(function(row){
+              newTemp.data.push(row);
+            });
+          });
+          temp = [];
+          temp.push(newTemp);
+        }
       }
       
       details.innerHTML = "";
       details.appendChild(this.json2Table(temp[0].data));
       hideButton.style.display = "block";
+      exportButton.style.display = "block";
       
     }
     else {
@@ -445,18 +481,37 @@ export class HomePage {
   }
 
   resetDetails(event) {
-
-    var details;
+  
+    var button;
+    
     if (event.srcElement.parentElement.previousElementSibling.previousElementSibling.className == "paramGroup") {
-      details = event.srcElement.parentElement.nextElementSibling;
-      event.srcElement.parentElement.style.display = "none";
+      button = event.srcElement.parentElement;
     }
     else {
-      details = event.srcElement.nextElementSibling;
-      event.srcElement.style.display = "none";
+      button = event.srcElement;
     }
+    
+    button.parentElement.firstElementChild.childNodes.forEach(function(element){
+      
+      if (element.tagName == "ION-ITEM") {
+        element.firstElementChild.firstElementChild.lastElementChild.setAttribute('ng-reflect-model','');
+        element.firstElementChild.firstElementChild.lastElementChild.setAttribute('class','select select-md ng-untouched ng-pristine ng-valid');
+        element.firstElementChild.firstElementChild.lastElementChild.firstElementChild.innerHTML= "";
+        //element.firstElementChild.firstElementChild.lastElementChild.firstChild.remove();
+        //element.firstElementChild.firstElementChild.lastElementChild.firstChild.remove();
+        
+        // risolvere problema!
+      }
+          
+    });
 
+    var details, exportButton;
+    
+    details = button.nextElementSibling;
+    exportButton = button.nextElementSibling.nextElementSibling;
+    button.style.display = "none";
     details.innerHTML = "";
+    exportButton.style.display = "none";
   }
 
   json2Table(obj) {
@@ -494,8 +549,53 @@ export class HomePage {
               tabCell.innerHTML = obj[i][col[j]];
           }
       }
-
+      
     return table;
+  }
+  
+  table2csv(table) {
+  
+    var data = [];
+    
+    table.childNodes.forEach(function(tr){
+      var row = [];
+      tr.childNodes.forEach(function(th){
+        row.push(th.innerHTML);
+      });
+      data.push(row);
+    });
+    
+    var header = data[0];
+    data.splice(0, 1);
+    
+    let filecsv = papa.unparse({
+      fields: header,
+      data: data
+    });
+    
+    var blob = new Blob([filecsv]);
+    var a = window.document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = "newdata.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    return filecsv;
+  }
+
+  openIn() {
+    var table = event.srcElement.previousElementSibling;
+    
+    if (table == null) {
+      table = event.srcElement.parentElement.previousElementSibling.firstElementChild.firstElementChild;
+    }
+    else {
+      table = event.srcElement.previousElementSibling.firstElementChild.firstElementChild;
+    }
+    
+    var csv = this.table2csv(table);
+    this.socialSharing.share(csv);
   }
 
   memorySizeOf(obj) {
