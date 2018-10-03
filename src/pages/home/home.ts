@@ -1,5 +1,5 @@
 import { Component, ViewChildren, QueryList } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { ModalController } from 'ionic-angular';
 import { PopoverController } from 'ionic-angular';
@@ -35,7 +35,7 @@ export class HomePage {
   converter = require('json-2-csv');
 
 
-  constructor(public loadingCtrl: LoadingController, public popoverCtrl: PopoverController, public navCtrl: NavController, public alertCtrl: AlertController, private http: HttpClient, private storage: Storage, private modal: ModalController, private socialSharing: SocialSharing) {
+  constructor(public loadingCtrl: LoadingController, public popoverCtrl: PopoverController, public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, private http: HttpClient, private storage: Storage, private modal: ModalController, private socialSharing: SocialSharing) {
 
   }
 
@@ -218,7 +218,7 @@ export class HomePage {
   getData(mode, tab, id) {
 
     if (mode == "online") {
-      this.http.get("http://192.168.0.114:8080"+tab.url)
+      this.http.get("http://192.168.0.116:8080"+tab.url)
         .subscribe(
           out => {
             //window.alert(JSON.stringify(out.details.paramValues));
@@ -241,25 +241,86 @@ export class HomePage {
       this.drawChart(tab.chart.data, id, tab.chart.chartOptions);
     }
   }
+  
+  tryToSolve(keys, id) {
+  
+    var newKeys = [];
+    var elements = this.tabs[id].details.detailsOptions.filter(x => x.name == "quiz")[0].elements;
+    console.log(elements);
+    
+    keys.forEach((key) => {
+      
+      var index = elements.findIndex(x => x.name == key);
+      
+      var lable = "";
+          
+      if (elements.filter(x => x.name == key).length != 0) {
+      
+        var section = elements.filter(x => x.name == key)[0].filter;
+      
+        this.tabs[id].details.detailsOptions.filter(x => x.name == "section")[0].elements.forEach(function(sec){
+          if (sec.name == section) {
+        
+            for (var i = index; i >= 0; i--) {
+              if (elements[i].enable == 0) {
+                lable = elements[i].name;
+                break;
+              }
+            }
+            
+            var newKey;
+            
+            var es = "E" + key.split(" - ")[0];
+            if (key.split(" - ")[0].length > 3) {
+              es = key;
+            }
+            
+            if (lable != "") {
+            
+              var la = "L" + lable.split(" ")[lable.split(" ").length-1];
+              if (lable.split(" ")[lable.split(" ").length-1].length > 3) {
+                la = lable.split(" ")[lable.split(" ").length-1];
+              }
+            
+              newKey = "S" + sec.id + " " + la + " " + es;
+            }
+            else {
+              newKey = "S" + sec.id + " " + es;
+            }
+            newKeys.push(newKey);
+          }
+        });
+      
+      }
+
+    });
+    
+    console.log(newKeys);
+    
+    return newKeys;
+  
+  }
 
   drawChart(data, idItem, options, variable?) {
     
     if (variable != undefined) {
-      console.log(data);
       data = data.filter(x => x.variable == variable);
-      console.log(data);
     }
     
     var keys = new Array(data.length);
   
     for(let i=0; i!=data.length ; i++) {
-      keys[i]=data[i].id;
+      keys[i] = data[i].id;
     }
+    
+    keys = this.tryToSolve(keys, idItem);
+
+    console.log(keys);
 
     var values = new Array(data.length);
 
     for(let i=0; i!=data.length ; i++) {
-      values[i]=data[i].log;
+      values[i] = data[i].log;
     }
     
     values = values.slice(0,15);

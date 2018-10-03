@@ -5,6 +5,7 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { SignInPage } from '../pages/sign-in/sign-in';
 import { IonicStorageModule } from '@ionic/storage';
 import { PopoverContentPage } from '../pages/home/popover';
 
@@ -16,6 +17,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
   declarations: [
     MyApp,
     HomePage,
+    SignInPage,
     PopoverContentPage
   ],
   imports: [
@@ -29,6 +31,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
   entryComponents: [
     MyApp,
     HomePage,
+    SignInPage,
     PopoverContentPage
   ],
   providers: [

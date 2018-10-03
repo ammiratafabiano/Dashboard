@@ -1,0 +1,45 @@
+<ion-header no-border>
+</ion-header>
+
+<ion-content no-bounce padding>
+
+  <ion-row class="app-icon-container">
+    <ion-col text-center>
+      <ion-icon name="ionic" class="app-icon-zoom"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+  <form [formGroup]="credentialsForm">
+
+    <ion-item>
+      <ion-label floating>User</ion-label>
+      <ion-input required [formControl]="credentialsForm.controls['user']"
+          type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input required [formControl]="credentialsForm.controls['password']"
+          type="password"></ion-input>
+    </ion-item>
+
+    <ion-row class="sign-in-button-container">
+      <ion-col text-center>
+        <button ion-button block color="secondary" (click)="onSignIn()">
+          Sign in
+        </button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col text-center>
+        <button ion-button clear color="light"
+            (click)="onForgotPassword()">
+          Forgot your password?
+        </button>
+      </ion-col>
+    </ion-row>
+
+  </form>
+
+</ion-content>

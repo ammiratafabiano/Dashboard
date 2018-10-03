@@ -1,14 +1,14 @@
 webpackJsonp([0],{
 
-/***/ 510:
+/***/ 511:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddTabModalPageModule", function() { return AddTabModalPageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__add_tab_modal__ = __webpack_require__(511);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__add_tab_modal__ = __webpack_require__(513);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -38,14 +38,14 @@ var AddTabModalPageModule = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 511:
+/***/ 513:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AddTabModalPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(122);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(20);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -76,7 +76,7 @@ var AddTabModalPage = /** @class */ (function () {
     };
     AddTabModalPage.prototype.getTabList = function () {
         var _this = this;
-        this.http.get("http://192.168.0.114:8080/available")
+        this.http.get("http://192.168.0.116:8080/available")
             .subscribe(function (data) {
             _this.availableTabs = data;
             console.log(data);
@@ -117,7 +117,7 @@ var AddTabModalPage = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
             selector: 'page-add-tab-modal',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/add-tab-modal/add-tab-modal.html"*/'<!--\n  Generated template for the AddTabModalPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n  <ion-navbar>\n    <ion-title>Add a tab</ion-title>\n    <ion-buttons end>\n      <button ion-button (click)="closeModal();">Close</button>\n    </ion-buttons>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <div id="tabChoice">\n    <ion-item>\n      <ion-label>Tab\'s name</ion-label>\n      <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="newTabValue">\n        <ion-option *ngFor="let options of availableTabs" [value] = "options.url">{{options.description}}</ion-option>\n      </ion-select>\n    </ion-item>\n    <button ion-button color="danger" (click)="addTab();">Confirm</button>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/add-tab-modal/add-tab-modal.html"*/,
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["a" /* HttpClient */]])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["a" /* HttpClient */]])
     ], AddTabModalPage);
     return AddTabModalPage;
 }());

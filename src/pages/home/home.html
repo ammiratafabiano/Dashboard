@@ -1,6 +1,7 @@
 <ion-header>
-  <ion-navbar color="danger">
-    <ion-title> MyDashboard </ion-title>
+  <ion-navbar color="danger" hideBackButton>
+    <ion-title *ngIf="navParams.get('data').firstname"> {{ navParams.get('data').firstname }}'s Dashboard </ion-title>
+    <ion-title *ngIf="navParams.get('data').firstname == ''"> MyDashboard </ion-title>
     <button id="popover" icon-only (click)="presentPopover($event)">
       <ion-icon name="more"></ion-icon>
     </button>

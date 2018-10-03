@@ -28,7 +28,7 @@ export class AddTabModalPage {
   }
 
   getTabList() {
-    this.http.get("http://192.168.0.114:8080/available")
+    this.http.get("http://192.168.0.116:8080/available")
       .subscribe(
         data => {
           this.availableTabs = data;
