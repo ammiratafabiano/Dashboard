@@ -6,8 +6,6 @@ import { HttpClient } from '@angular/common/http';
 
 import { HomePage } from '../home/home';
 
-import { filter } from 'rxjs/operators';
-
 @IonicPage()
 @Component({
   selector: 'page-sign-in',
@@ -50,7 +48,7 @@ export class SignInPage {
     
     this.http.get("http://192.168.0.114:8081/users/all")
 		.subscribe(
-		  out => {
+		  (out: Array<any>) => {
 		  	if (user != "" && pass != "") {
 				var account = out.filter(x => x.username = user)[0];
 				if (account != undefined) {
