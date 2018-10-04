@@ -51,13 +51,22 @@ export class SignInPage {
     this.http.get("http://192.168.0.114:8081/users/all")
 		.subscribe(
 		  out => {
-		  	var account = out.filter(x => x.username = user)[0];
-		  	if (user == account.username && pass == account.password) {
-		  		console.log(account);
-				this.navCtrl.push(HomePage, { data: account });
+		  	if (user != "" && pass != "") {
+				var account = out.filter(x => x.username = user)[0];
+				if (account != undefined) {
+					if (user == account.username && pass == account.password) {
+						this.navCtrl.push(HomePage, { data: account });
+					}
+					else {
+						this.popup("Wrong Username or Password");
+					}
+				}
+				else {
+					this.popup("Wrong Username or Password");
+				}
 			}
 			else {
-				this.popup("Wrong Username or Password");
+				this.popup("Please insert credentials");
 			}
 		  },
 		  error => {

@@ -57,13 +57,22 @@ var SignInPage = /** @class */ (function () {
         var pass = this.credentialsForm.value.password;
         this.http.get("http://192.168.0.114:8081/users/all")
             .subscribe(function (out) {
-            var account = out.filter(function (x) { return x.username = user; })[0];
-            if (user == account.username && pass == account.password) {
-                console.log(account);
-                _this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_4__home_home__["a" /* HomePage */], { data: account });
+            if (user != "" && pass != "") {
+                var account = out.filter(function (x) { return x.username = user; })[0];
+                if (account != undefined) {
+                    if (user == account.username && pass == account.password) {
+                        _this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_4__home_home__["a" /* HomePage */], { data: account });
+                    }
+                    else {
+                        _this.popup("Wrong Username or Password");
+                    }
+                }
+                else {
+                    _this.popup("Wrong Username or Password");
+                }
             }
             else {
-                _this.popup("Wrong Username or Password");
+                _this.popup("Please insert credentials");
             }
         }, function (error) {
             _this.popup("Error");
@@ -74,7 +83,7 @@ var SignInPage = /** @class */ (function () {
     };
     SignInPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-sign-in',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/sign-in/sign-in.html"*/'<ion-header no-border>\n</ion-header>\n\n<ion-content no-bounce padding>\n\n  <ion-row class="app-icon-container">\n    <ion-col text-center>\n      <ion-icon name="ionic" class="app-icon-zoom"></ion-icon>\n    </ion-col>\n  </ion-row>\n\n  <form [formGroup]="credentialsForm">\n\n    <ion-item>\n      <ion-label floating>User</ion-label>\n      <ion-input required [formControl]="credentialsForm.controls[\'user\']"\n          type="text"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label floating>Password</ion-label>\n      <ion-input required [formControl]="credentialsForm.controls[\'password\']"\n          type="password"></ion-input>\n    </ion-item>\n\n    <ion-row class="sign-in-button-container">\n      <ion-col text-center>\n        <button ion-button block color="secondary" (click)="onSignIn()">\n          Sign in\n        </button>\n      </ion-col>\n    </ion-row>\n\n    <ion-row>\n      <ion-col text-center>\n        <button ion-button clear color="light"\n            (click)="onForgotPassword()">\n          Forgot your password?\n        </button>\n      </ion-col>\n    </ion-row>\n\n  </form>\n\n</ion-content>'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/sign-in/sign-in.html"*/
+            selector: 'page-sign-in',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/sign-in/sign-in.html"*/'<ion-header no-border>\n</ion-header>\n\n<ion-content no-bounce padding>\n\n  <ion-row class="app-icon-container">\n    <ion-col text-center>\n      <ion-icon name="ionic" class="app-icon-zoom"></ion-icon>\n    </ion-col>\n  </ion-row>\n\n  <form [formGroup]="credentialsForm">\n\n    <ion-item>\n      <ion-label floating>User</ion-label>\n      <ion-input required [formControl]="credentialsForm.controls[\'user\']"\n          type="text"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label floating>Password</ion-label>\n      <ion-input required [formControl]="credentialsForm.controls[\'password\']"\n          type="password"></ion-input>\n    </ion-item>\n\n    <ion-row class="sign-in-button-container">\n      <ion-col text-center>\n        <button ion-button block color="secondary" (click)="onSignIn()">\n          Sign in\n        </button>\n      </ion-col>\n    </ion-row>\n\n<!--\n    <ion-row>\n      <ion-col text-center>\n        <button ion-button clear color="light"\n            (click)="onForgotPassword()">\n          Forgot your password?\n        </button>\n      </ion-col>\n    </ion-row>\n-->\n\n  </form>\n\n</ion-content>'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/sign-in/sign-in.html"*/
         }),
         __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]) === "function" && _e || Object])
     ], SignInPage);
