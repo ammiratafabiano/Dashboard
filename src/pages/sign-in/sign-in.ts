@@ -3,8 +3,9 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-
 import { HomePage } from '../home/home';
+
+import {Md5} from 'ts-md5/dist/md5';
 
 @IonicPage()
 @Component({
@@ -44,7 +45,9 @@ export class SignInPage {
 
   onSignIn() {
     var user = this.credentialsForm.value.user;
-    var pass = this.credentialsForm.value.password
+    var pass = Md5.hashStr(this.credentialsForm.value.password);
+    
+    console.log(pass);
     
     this.http.get("http://192.168.0.114:8081/users/all")
 		.subscribe(
