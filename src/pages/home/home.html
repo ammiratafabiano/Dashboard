@@ -44,7 +44,9 @@
       </ion-card-header>
       <div class="id">{{ data.id }}</div>
       <ion-card-content>
-        <canvas #chart></canvas>
+        <div class="chartContainer">
+          <canvas class="chart"></canvas>
+        </div>
         <div class="details">
           <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>
           <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">

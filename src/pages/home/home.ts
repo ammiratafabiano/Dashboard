@@ -21,7 +21,6 @@ declare var require: any
 export class HomePage {
 
   @ViewChildren('chart') components:QueryList<any>;
-  @ViewChildren('details') components2:QueryList<any>;
 
   barCharts: Chart;
   lineCharts: Chart;
@@ -218,7 +217,7 @@ export class HomePage {
   getData(mode, tab, id) {
 
     if (mode == "online") {
-      this.http.get("http://192.168.0.116:8080"+tab.url)
+      this.http.get("http://192.168.0.114:8080"+tab.url)
         .subscribe(
           out => {
             //window.alert(JSON.stringify(out.details.paramValues));
@@ -244,60 +243,66 @@ export class HomePage {
   
   tryToSolve(keys, id) {
   
-    var newKeys = [];
-    var elements = this.tabs[id].details.detailsOptions.filter(x => x.name == "quiz")[0].elements;
-    console.log(elements);
+    if (this.tabs[id].details.detailsOptions != undefined) {
     
-    keys.forEach((key) => {
+      var newKeys = [];
+      var elements = this.tabs[id].details.detailsOptions.filter(x => x.name == "quiz")[0].elements;
+      console.log(elements);
+    
+      keys.forEach((key) => {
       
-      var index = elements.findIndex(x => x.name == key);
+        var index = elements.findIndex(x => x.name == key);
       
-      var lable = "";
+        var lable = "";
           
-      if (elements.filter(x => x.name == key).length != 0) {
+        if (elements.filter(x => x.name == key).length != 0) {
       
-        var section = elements.filter(x => x.name == key)[0].filter;
+          var section = elements.filter(x => x.name == key)[0].filter;
       
-        this.tabs[id].details.detailsOptions.filter(x => x.name == "section")[0].elements.forEach(function(sec){
-          if (sec.name == section) {
+          this.tabs[id].details.detailsOptions.filter(x => x.name == "section")[0].elements.forEach(function(sec){
+            if (sec.name == section) {
         
-            for (var i = index; i >= 0; i--) {
-              if (elements[i].enable == 0) {
-                lable = elements[i].name;
-                break;
-              }
-            }
-            
-            var newKey;
-            
-            var es = "E" + key.split(" - ")[0];
-            if (key.split(" - ")[0].length > 3) {
-              es = key;
-            }
-            
-            if (lable != "") {
-            
-              var la = "L" + lable.split(" ")[lable.split(" ").length-1];
-              if (lable.split(" ")[lable.split(" ").length-1].length > 3) {
-                la = lable.split(" ")[lable.split(" ").length-1];
+              for (var i = index; i >= 0; i--) {
+                if (elements[i].enable == 0) {
+                  lable = elements[i].name;
+                  break;
+                }
               }
             
-              newKey = "S" + sec.id + " " + la + " " + es;
+              var newKey;
+            
+              var es = "E" + key.split(" - ")[0];
+              if (key.split(" - ")[0].length > 3) {
+                es = key;
+              }
+            
+              if (lable != "") {
+            
+                var la = "L" + lable.split(" ")[lable.split(" ").length-1];
+                if (lable.split(" ")[lable.split(" ").length-1].length > 3) {
+                  la = lable.split(" ")[lable.split(" ").length-1];
+                }
+            
+                newKey = "S" + sec.id + " " + la + " " + es;
+              }
+              else {
+                newKey = "S" + sec.id + " " + es;
+              }
+              newKeys.push(newKey);
             }
-            else {
-              newKey = "S" + sec.id + " " + es;
-            }
-            newKeys.push(newKey);
-          }
-        });
+          });
       
-      }
+        }
 
-    });
+      });
     
-    console.log(newKeys);
+      console.log(newKeys);
     
-    return newKeys;
+      return newKeys;
+    
+    }
+    
+    return keys;
   
   }
 
@@ -336,10 +341,15 @@ export class HomePage {
       type = options.type;
       label = "# of " + options.label;
     }
-
-    var canvas = this.components.toArray()[idItem].nativeElement;
-
-    var newChart = new Chart(canvas, {
+    
+    var canvas = document.getElementsByClassName("chart")[idItem];
+    var container = canvas.parentNode;
+    
+    container.innerHTML= "<canvas class=\"chart\"></canvas>";
+    
+    canvas = document.getElementsByClassName("chart")[idItem];
+    
+    this.barCharts = new Chart(canvas, {
 
       type: type,
       data: {

@@ -76,7 +76,7 @@ var AddTabModalPage = /** @class */ (function () {
     };
     AddTabModalPage.prototype.getTabList = function () {
         var _this = this;
-        this.http.get("http://192.168.0.116:8080/available")
+        this.http.get("http://192.168.0.114:8080/available")
             .subscribe(function (data) {
             _this.availableTabs = data;
             console.log(data);
