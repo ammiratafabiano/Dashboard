@@ -217,7 +217,7 @@ export class HomePage {
   getData(mode, tab, id) {
 
     if (mode == "online") {
-      this.http.get("http://192.168.0.114:8080"+tab.url)
+      this.http.get("http://150.145.114.110:8009"+tab.url)
         .subscribe(
           out => {
             //window.alert(JSON.stringify(out.details.paramValues));
@@ -343,7 +343,7 @@ export class HomePage {
     }
     
     var canvas = document.getElementsByClassName("chart")[idItem];
-    var container = canvas.parentNode;
+    var container = <HTMLElement> canvas.parentNode;
     
     container.innerHTML= "<canvas class=\"chart\"></canvas>";
     

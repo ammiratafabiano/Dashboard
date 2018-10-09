@@ -49,7 +49,7 @@ export class SignInPage {
     
     console.log(pass);
     
-    this.http.get("http://192.168.0.114:8081/users/all")
+    this.http.get("http://150.145.114.110:8008/users/all")
 		.subscribe(
 		  (out: Array<any>) => {
 		  	if (user != "" && pass != "") {
