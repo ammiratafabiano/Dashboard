@@ -28,7 +28,8 @@ export class AddTabModalPage {
   }
 
   getTabList() {
-    this.http.get("http://150.145.114.110:8009/available")
+    this.http.get("http://127.0.0.1:8080/available")
+    //this.http.get("http://150.145.114.110:8009/available")
       .subscribe(
         data => {
           this.availableTabs = data;
@@ -62,10 +63,17 @@ export class AddTabModalPage {
       var selectedUrl = this.newTabValue;
       var selectedSource = this.availableTabs.filter(x => x.url == this.newTabValue)[0].source;
       var selectedDescription = this.availableTabs.filter(x => x.url == this.newTabValue)[0].description;
-      var selectedChartOptions = this.availableTabs.filter(x => x.url == this.newTabValue)[0].chartOptions;
+      /*var selectedChartOptions = [];
+      var selectedDetailsOptions = [];
+      var temp;
+      if (this.availableTabs.filter(x => x.url == this.newTabValue)[0].chart != undefined)
+        selectedChartOptions = this.availableTabs.filter(x => x.url == this.newTabValue)[0].chartOptions;
+
       if (this.availableTabs.filter(x => x.url == this.newTabValue)[0].details != undefined)
-        var selectedDetailsOptions = this.availableTabs.filter(x => x.url == this.newTabValue)[0].details.paramValues;
-      var temp = {url: selectedUrl, source: selectedSource, description: selectedDescription, chartOptions: selectedChartOptions, detailsOptions: selectedDetailsOptions};
+        selectedDetailsOptions = this.availableTabs.filter(x => x.url == this.newTabValue)[0].details.detailsOptions;
+      */       
+      var temp = {url: selectedUrl, source: selectedSource, description: selectedDescription /*, chartOptions: selectedChartOptions, detailsOptions: selectedDetailsOptions*/};
+
       this.view.dismiss(temp);
     }
   }

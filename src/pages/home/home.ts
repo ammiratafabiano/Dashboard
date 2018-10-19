@@ -119,6 +119,7 @@ export class HomePage {
 			}
 			else {
 				this.tabs = val;
+
 				if (this.tabs != undefined)
 					this.nTabs = this.tabs.length;
 				else
@@ -138,15 +139,16 @@ export class HomePage {
     addTabModal.onDidDismiss((out) => {
       if (out != undefined) {
             let currentID = this.unique();
-            var newTab = { "id": currentID, "url": out.url, "source": out.source, "description": out.description, "chart": { "data": {}, "chartOptions": out.chartOptions }, "details": { "data": {}, "detailsOptions": out.detailsOptions }, "lastUpdate": (new Date).getTime() };
-            //window.alert(JSON.stringify(newTab));
+            var newTab = { "id": currentID, "url": out.url, "source": out.source, "description": out.description , "chart": { "data": {}, "chartOptions": [] }, "details": { "data": {}, "detailsOptions": [] }, "lastUpdate": (new Date).getTime() };
             this.nTabs = this.tabs.push(newTab);
-            this.storage.set('tabs', this.tabs);
+            
             this.updateData();
+            this.storage.set('tabs', this.tabs);
       }
     });
   }
 
+/*
   favoriteTab(event: any) {
 
     var id = event.srcElement.parentElement.parentElement.parentElement.nextElementSibling.innerHTML;
@@ -161,6 +163,7 @@ export class HomePage {
     this.updateData();
 
   }
+*/
 
   deleteTab(event: any) {
 
@@ -217,19 +220,29 @@ export class HomePage {
   getData(mode, tab, id) {
 
     if (mode == "online") {
-      this.http.get("http://150.145.114.110:8009"+tab.url)
+      this.http.get("http://127.0.0.1:8080"+tab.url)
+      //this.http.get("http://150.145.114.110:8009"+tab.url)
         .subscribe(
-          out => {
-            //window.alert(JSON.stringify(out.details.paramValues));
-            //window.alert(this.memorySizeOf(out));
+          out => {         
+                      
+            if (out["chart"] != undefined) {
+              this.tabs[id].chart = out["chart"];
+              this.drawChart(out["chart"].data, id, tab.chart.chartOptions);
+            }
+            /*
             this.tabs[id].chart.data = out["chart"];
             this.drawChart(out["chart"], id, tab.chart.chartOptions);
+            */
             if (out["details"] != undefined) {
+              /*
+              this.tabs[id].details.data = out["details"].data;
+              this.tabs[id].details.detailsOptions = out["details"].paramValues; */
+              //this.drawDetails(out["details"].data, id);
               this.tabs[id].details.data = out["details"].data;
               this.tabs[id].details.detailsOptions = out["details"].paramValues;
-              //this.drawDetails(out["details"].data, id);
             }
             this.storage.set('tabs', this.tabs);
+            
           },
           error => {
             this.popup("I'm sorry. Server problems.");
@@ -243,11 +256,10 @@ export class HomePage {
   
   tryToSolve(keys, id) {
   
-    if (this.tabs[id].details.detailsOptions != undefined) {
+    if (this.tabs[id].details.detailsOptions.length != 0) {
     
       var newKeys = [];
       var elements = this.tabs[id].details.detailsOptions.filter(x => x.name == "quiz")[0].elements;
-      console.log(elements);
     
       keys.forEach((key) => {
       
@@ -295,9 +307,7 @@ export class HomePage {
         }
 
       });
-    
-      console.log(newKeys);
-    
+        
       return newKeys;
     
     }
@@ -311,21 +321,21 @@ export class HomePage {
     if (variable != undefined) {
       data = data.filter(x => x.variable == variable);
     }
+        
+    var fields = Object.keys(data[0]);
     
     var keys = new Array(data.length);
   
     for(let i=0; i!=data.length ; i++) {
-      keys[i] = data[i].id;
+      keys[i] = data[i][fields[0]];
     }
     
     keys = this.tryToSolve(keys, idItem);
 
-    console.log(keys);
-
     var values = new Array(data.length);
 
     for(let i=0; i!=data.length ; i++) {
-      values[i] = data[i].log;
+      values[i] = data[i][fields[1]];
     }
     
     values = values.slice(0,15);

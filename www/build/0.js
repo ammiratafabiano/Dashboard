@@ -76,7 +76,7 @@ var AddTabModalPage = /** @class */ (function () {
     };
     AddTabModalPage.prototype.getTabList = function () {
         var _this = this;
-        this.http.get("http://150.145.114.110:8009/available")
+        this.http.get("http://127.0.0.1:8080/available")
             .subscribe(function (data) {
             _this.availableTabs = data;
             console.log(data);
@@ -106,10 +106,16 @@ var AddTabModalPage = /** @class */ (function () {
             var selectedUrl = this.newTabValue;
             var selectedSource = this.availableTabs.filter(function (x) { return x.url == _this.newTabValue; })[0].source;
             var selectedDescription = this.availableTabs.filter(function (x) { return x.url == _this.newTabValue; })[0].description;
-            var selectedChartOptions = this.availableTabs.filter(function (x) { return x.url == _this.newTabValue; })[0].chartOptions;
-            if (this.availableTabs.filter(function (x) { return x.url == _this.newTabValue; })[0].details != undefined)
-                var selectedDetailsOptions = this.availableTabs.filter(function (x) { return x.url == _this.newTabValue; })[0].details.paramValues;
-            var temp = { url: selectedUrl, source: selectedSource, description: selectedDescription, chartOptions: selectedChartOptions, detailsOptions: selectedDetailsOptions };
+            /*var selectedChartOptions = [];
+            var selectedDetailsOptions = [];
+            var temp;
+            if (this.availableTabs.filter(x => x.url == this.newTabValue)[0].chart != undefined)
+              selectedChartOptions = this.availableTabs.filter(x => x.url == this.newTabValue)[0].chartOptions;
+      
+            if (this.availableTabs.filter(x => x.url == this.newTabValue)[0].details != undefined)
+              selectedDetailsOptions = this.availableTabs.filter(x => x.url == this.newTabValue)[0].details.detailsOptions;
+            */
+            var temp = { url: selectedUrl, source: selectedSource, description: selectedDescription /*, chartOptions: selectedChartOptions, detailsOptions: selectedDetailsOptions*/ };
             this.view.dismiss(temp);
         }
     };
@@ -117,9 +123,10 @@ var AddTabModalPage = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
             selector: 'page-add-tab-modal',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/add-tab-modal/add-tab-modal.html"*/'<!--\n  Generated template for the AddTabModalPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n  <ion-navbar>\n    <ion-title>Add a tab</ion-title>\n    <ion-buttons end>\n      <button ion-button (click)="closeModal();">Close</button>\n    </ion-buttons>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <div id="tabChoice">\n    <ion-item>\n      <ion-label>Tab\'s name</ion-label>\n      <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="newTabValue">\n        <ion-option *ngFor="let options of availableTabs" [value] = "options.url">{{options.description}}</ion-option>\n      </ion-select>\n    </ion-item>\n    <button ion-button color="danger" (click)="addTab();">Confirm</button>\n  </div>\n</ion-content>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/add-tab-modal/add-tab-modal.html"*/,
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["a" /* HttpClient */]])
+        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* ViewController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* ViewController */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["a" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["a" /* HttpClient */]) === "function" && _c || Object])
     ], AddTabModalPage);
     return AddTabModalPage;
+    var _a, _b, _c;
 }());
 
 //# sourceMappingURL=add-tab-modal.js.map

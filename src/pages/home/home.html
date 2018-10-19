@@ -47,13 +47,13 @@
         <div class="chartContainer">
           <canvas class="chart"></canvas>
         </div>
-        <div class="details">
+        <div class="details" *ngIf="data.details.detailsOptions.length != 0">
           <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>
           <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">
             <ion-icon class="detailsUp" name="arrow-forward"></ion-icon>
             <ion-icon class="detailsDown" name="arrow-down"></ion-icon>
           </button>
-          <div class="detailsForm" *ngIf="data.details.detailsOptions">
+          <div class="detailsForm">
             <div class="paramGroup">
               <ng-container *ngFor="let details of data.details.detailsOptions;">
                 <ion-item *ngIf="details.dependence==1">

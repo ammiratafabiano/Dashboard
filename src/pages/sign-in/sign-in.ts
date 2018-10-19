@@ -46,14 +46,16 @@ export class SignInPage {
   onSignIn() {
     var user = this.credentialsForm.value.user;
     var pass = Md5.hashStr(this.credentialsForm.value.password);
-    
-    console.log(pass);
-    
-    this.http.get("http://150.145.114.110:8008/users/all")
+        
+    this.http.get("http://127.0.0.1:8081/users/all")
+    //this.http.get("http://150.145.114.110:8008/users/all")
 		.subscribe(
-		  (out: Array<any>) => {
+		  out => {
 		  	if (user != "" && pass != "") {
-				var account = out.filter(x => x.username = user)[0];
+		  		
+		  		
+				var account = out["data"].filter(x => x.username == user)[0];
+				
 				if (account != undefined) {
 					if (user == account.username && pass == account.password) {
 						this.navCtrl.push(HomePage, { data: account });

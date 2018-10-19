@@ -58,11 +58,10 @@ var SignInPage = /** @class */ (function () {
         var _this = this;
         var user = this.credentialsForm.value.user;
         var pass = __WEBPACK_IMPORTED_MODULE_5_ts_md5_dist_md5__["Md5"].hashStr(this.credentialsForm.value.password);
-        console.log(pass);
-        this.http.get("http://150.145.114.110:8008/users/all")
+        this.http.get("http://127.0.0.1:8081/users/all")
             .subscribe(function (out) {
             if (user != "" && pass != "") {
-                var account = out.filter(function (x) { return x.username = user; })[0];
+                var account = out["data"].filter(function (x) { return x.username == user; })[0];
                 if (account != undefined) {
                     if (user == account.username && pass == account.password) {
                         _this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_4__home_home__["a" /* HomePage */], { data: account });
@@ -89,13 +88,10 @@ var SignInPage = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
             selector: 'page-sign-in',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/sign-in/sign-in.html"*/'<ion-header no-border>\n</ion-header>\n\n<ion-content no-bounce padding>\n\n  <ion-row class="app-icon-container">\n    <ion-col text-center>\n      <ion-icon name="ionic" class="app-icon-zoom"></ion-icon>\n    </ion-col>\n  </ion-row>\n\n  <form [formGroup]="credentialsForm">\n\n    <ion-item>\n      <ion-label floating>User</ion-label>\n      <ion-input required [formControl]="credentialsForm.controls[\'user\']"\n          type="text"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label floating>Password</ion-label>\n      <ion-input required [formControl]="credentialsForm.controls[\'password\']"\n          type="password"></ion-input>\n    </ion-item>\n\n    <ion-row class="sign-in-button-container">\n      <ion-col text-center>\n        <button ion-button block color="secondary" (click)="onSignIn()">\n          Sign in\n        </button>\n      </ion-col>\n    </ion-row>\n\n<!--\n    <ion-row>\n      <ion-col text-center>\n        <button ion-button clear color="light"\n            (click)="onForgotPassword()">\n          Forgot your password?\n        </button>\n      </ion-col>\n    </ion-row>\n-->\n\n  </form>\n\n</ion-content>'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/sign-in/sign-in.html"*/
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */],
-            __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */],
-            __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]])
+        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormBuilder */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]) === "function" && _e || Object])
     ], SignInPage);
     return SignInPage;
+    var _a, _b, _c, _d, _e;
 }());
 
 //# sourceMappingURL=sign-in.js.map
@@ -281,23 +277,29 @@ var HomePage = /** @class */ (function () {
         addTabModal.onDidDismiss(function (out) {
             if (out != undefined) {
                 var currentID = _this.unique();
-                var newTab = { "id": currentID, "url": out.url, "source": out.source, "description": out.description, "chart": { "data": {}, "chartOptions": out.chartOptions }, "details": { "data": {}, "detailsOptions": out.detailsOptions }, "lastUpdate": (new Date).getTime() };
-                //window.alert(JSON.stringify(newTab));
+                var newTab = { "id": currentID, "url": out.url, "source": out.source, "description": out.description, "chart": { "data": {}, "chartOptions": [] }, "details": { "data": {}, "detailsOptions": [] }, "lastUpdate": (new Date).getTime() };
                 _this.nTabs = _this.tabs.push(newTab);
-                _this.storage.set('tabs', _this.tabs);
                 _this.updateData();
+                _this.storage.set('tabs', _this.tabs);
             }
         });
     };
-    HomePage.prototype.favoriteTab = function (event) {
+    /*
+      favoriteTab(event: any) {
+    
         var id = event.srcElement.parentElement.parentElement.parentElement.nextElementSibling.innerHTML;
-        var index = this.tabs.findIndex(function (x) { return x.id == id; });
+    
+        var index = this.tabs.findIndex(x => x.id == id);
+    
         var temp = this.tabs[index];
+    
         this.tabs.splice(index, 1);
         this.tabs.unshift(temp);
         this.storage.set('tabs', this.tabs);
         this.updateData();
-    };
+    
+      }
+    */
     HomePage.prototype.deleteTab = function (event) {
         var _this = this;
         var id = event.srcElement.parentElement.parentElement.nextElementSibling.innerHTML;
@@ -346,16 +348,23 @@ var HomePage = /** @class */ (function () {
     HomePage.prototype.getData = function (mode, tab, id) {
         var _this = this;
         if (mode == "online") {
-            this.http.get("http://150.145.114.110:8009" + tab.url)
+            this.http.get("http://127.0.0.1:8080" + tab.url)
                 .subscribe(function (out) {
-                //window.alert(JSON.stringify(out.details.paramValues));
-                //window.alert(this.memorySizeOf(out));
-                _this.tabs[id].chart.data = out["chart"];
-                _this.drawChart(out["chart"], id, tab.chart.chartOptions);
+                if (out["chart"] != undefined) {
+                    _this.tabs[id].chart = out["chart"];
+                    _this.drawChart(out["chart"].data, id, tab.chart.chartOptions);
+                }
+                /*
+                this.tabs[id].chart.data = out["chart"];
+                this.drawChart(out["chart"], id, tab.chart.chartOptions);
+                */
                 if (out["details"] != undefined) {
+                    /*
+                    this.tabs[id].details.data = out["details"].data;
+                    this.tabs[id].details.detailsOptions = out["details"].paramValues; */
+                    //this.drawDetails(out["details"].data, id);
                     _this.tabs[id].details.data = out["details"].data;
                     _this.tabs[id].details.detailsOptions = out["details"].paramValues;
-                    //this.drawDetails(out["details"].data, id);
                 }
                 _this.storage.set('tabs', _this.tabs);
             }, function (error) {
@@ -368,10 +377,9 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.prototype.tryToSolve = function (keys, id) {
         var _this = this;
-        if (this.tabs[id].details.detailsOptions != undefined) {
+        if (this.tabs[id].details.detailsOptions.length != 0) {
             var newKeys = [];
             var elements = this.tabs[id].details.detailsOptions.filter(function (x) { return x.name == "quiz"; })[0].elements;
-            console.log(elements);
             keys.forEach(function (key) {
                 var index = elements.findIndex(function (x) { return x.name == key; });
                 var lable = "";
@@ -405,7 +413,6 @@ var HomePage = /** @class */ (function () {
                     });
                 }
             });
-            console.log(newKeys);
             return newKeys;
         }
         return keys;
@@ -414,15 +421,15 @@ var HomePage = /** @class */ (function () {
         if (variable != undefined) {
             data = data.filter(function (x) { return x.variable == variable; });
         }
+        var fields = Object.keys(data[0]);
         var keys = new Array(data.length);
         for (var i = 0; i != data.length; i++) {
-            keys[i] = data[i].id;
+            keys[i] = data[i][fields[0]];
         }
         keys = this.tryToSolve(keys, idItem);
-        console.log(keys);
         var values = new Array(data.length);
         for (var i = 0; i != data.length; i++) {
-            values[i] = data[i].log;
+            values[i] = data[i][fields[1]];
         }
         values = values.slice(0, 15);
         keys = keys.slice(0, 15);
@@ -760,15 +767,16 @@ var HomePage = /** @class */ (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_9" /* ViewChildren */])('chart'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */])
+        __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* QueryList */]) === "function" && _a || Object)
     ], HomePage.prototype, "components", void 0);
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-home',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar color="danger" hideBackButton>\n    <ion-title *ngIf="navParams.get(\'data\').firstname"> {{ navParams.get(\'data\').firstname }}\'s Dashboard </ion-title>\n    <ion-title *ngIf="navParams.get(\'data\').firstname == \'\'"> MyDashboard </ion-title>\n    <button id="popover" icon-only (click)="presentPopover($event)">\n      <ion-icon name="more"></ion-icon>\n    </button>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n\n<ion-refresher (ionRefresh)="refresh($event)">\n    <ion-refresher-content></ion-refresher-content>\n</ion-refresher>\n\n<ion-list *ngFor="let data of tabs;" no-lines>\n\n    <ion-card>\n      <ion-card-header>\n        <div class="topHead">\n          <span class="source">{{ data.source }}</span>\n          <button class="delete" icon-only (click)="deleteTab($event);">\n            <ion-icon name="close"></ion-icon>\n          </button>\n          <div class="clear"></div>\n        </div>\n        <div class="bottomHead">\n          <div class="description">{{ data.description }}</div>\n          <div class="settings">\n            <ng-container *ngFor="let options of data.chart.chartOptions;">\n              <button class="typeSelected" icon-only *ngIf="options.selected==1" (click)="updateChart($event);">\n                <ion-icon class="iconTypeSelected" [name]="options.icon"></ion-icon>\n                <div class="id">{{ options.type }}</div>\n              </button>\n              <button class="type" icon-only *ngIf="options.selected==0" (click)="updateChart($event);">\n                <ion-icon class="iconType" [name]="options.icon"></ion-icon>\n                <div class="id">{{ options.type }}</div>\n              </button>\n            </ng-container>\n            <div class="clear"></div>\n          </div>\n        </div>\n      </ion-card-header>\n      <div class="id">{{ data.id }}</div>\n      <ion-card-content>\n        <div class="chartContainer">\n          <canvas class="chart"></canvas>\n        </div>\n        <div class="details">\n          <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>\n          <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">\n            <ion-icon class="detailsUp" name="arrow-forward"></ion-icon>\n            <ion-icon class="detailsDown" name="arrow-down"></ion-icon>\n          </button>\n          <div class="detailsForm" *ngIf="data.details.detailsOptions">\n            <div class="paramGroup">\n              <ng-container *ngFor="let details of data.details.detailsOptions;">\n                <ion-item *ngIf="details.dependence==1">\n                  <ion-label>{{ details.name }}</ion-label>\n                  <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                    <ng-container *ngFor="let element of details.elements;">\n                      <ng-container *ngIf="element.enable==1">\n                        <ion-option *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                      <ng-container *ngIf="element.enable==0">\n                        <ion-option disabled *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ng-container>\n                  </ion-select>\n                </ion-item>\n                <ng-container *ngIf="details.dependence==0">\n                  <ion-item *ngIf="details.independence==0">\n                    <ion-label>{{ details.name }}</ion-label>\n                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                      <ion-option [value]="all">All</ion-option>\n                      <ng-container *ngFor="let element of details.elements;">\n                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>\n                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ion-select>\n                  </ion-item>\n                  <ion-item *ngIf="details.independence==1">\n                    <ion-label>{{ details.name }}</ion-label>\n                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                      <ng-container *ngFor="let element of details.elements;">\n                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>\n                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ion-select>\n                  </ion-item>\n                </ng-container>\n              </ng-container>\n            </div>\n            <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>\n            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Reset</button>\n            <div *ngIf="data.details.detailsOptions"></div>\n            <button class ="exportDetails" *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="openIn($event);">Export</button>\n          </div>\n        </div>\n      </ion-card-content>\n    </ion-card>\n\n\n</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/
+            selector: 'page-home',template:/*ion-inline-start:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar color="danger" hideBackButton>\n    <ion-title *ngIf="navParams.get(\'data\').firstname"> {{ navParams.get(\'data\').firstname }}\'s Dashboard </ion-title>\n    <ion-title *ngIf="navParams.get(\'data\').firstname == \'\'"> MyDashboard </ion-title>\n    <button id="popover" icon-only (click)="presentPopover($event)">\n      <ion-icon name="more"></ion-icon>\n    </button>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n\n<ion-refresher (ionRefresh)="refresh($event)">\n    <ion-refresher-content></ion-refresher-content>\n</ion-refresher>\n\n<ion-list *ngFor="let data of tabs;" no-lines>\n\n    <ion-card>\n      <ion-card-header>\n        <div class="topHead">\n          <span class="source">{{ data.source }}</span>\n          <button class="delete" icon-only (click)="deleteTab($event);">\n            <ion-icon name="close"></ion-icon>\n          </button>\n          <div class="clear"></div>\n        </div>\n        <div class="bottomHead">\n          <div class="description">{{ data.description }}</div>\n          <div class="settings">\n            <ng-container *ngFor="let options of data.chart.chartOptions;">\n              <button class="typeSelected" icon-only *ngIf="options.selected==1" (click)="updateChart($event);">\n                <ion-icon class="iconTypeSelected" [name]="options.icon"></ion-icon>\n                <div class="id">{{ options.type }}</div>\n              </button>\n              <button class="type" icon-only *ngIf="options.selected==0" (click)="updateChart($event);">\n                <ion-icon class="iconType" [name]="options.icon"></ion-icon>\n                <div class="id">{{ options.type }}</div>\n              </button>\n            </ng-container>\n            <div class="clear"></div>\n          </div>\n        </div>\n      </ion-card-header>\n      <div class="id">{{ data.id }}</div>\n      <ion-card-content>\n        <div class="chartContainer">\n          <canvas class="chart"></canvas>\n        </div>\n        <div class="details" *ngIf="data.details.detailsOptions.length != 0">\n          <div *ngIf="data.details.detailsOptions" class="descriptionDetails">Details</div>\n          <button class="hideButtonDetails" *ngIf="data.details.detailsOptions" icon-only (click)="toggleDetails($event);">\n            <ion-icon class="detailsUp" name="arrow-forward"></ion-icon>\n            <ion-icon class="detailsDown" name="arrow-down"></ion-icon>\n          </button>\n          <div class="detailsForm">\n            <div class="paramGroup">\n              <ng-container *ngFor="let details of data.details.detailsOptions;">\n                <ion-item *ngIf="details.dependence==1">\n                  <ion-label>{{ details.name }}</ion-label>\n                  <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                    <ng-container *ngFor="let element of details.elements;">\n                      <ng-container *ngIf="element.enable==1">\n                        <ion-option *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                      <ng-container *ngIf="element.enable==0">\n                        <ion-option disabled *ngIf="element.filter==data.details.detailsOptions[details.indexOfDependence].paramName" [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ng-container>\n                  </ion-select>\n                </ion-item>\n                <ng-container *ngIf="details.dependence==0">\n                  <ion-item *ngIf="details.independence==0">\n                    <ion-label>{{ details.name }}</ion-label>\n                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                      <ion-option [value]="all">All</ion-option>\n                      <ng-container *ngFor="let element of details.elements;">\n                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>\n                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ion-select>\n                  </ion-item>\n                  <ion-item *ngIf="details.independence==1">\n                    <ion-label>{{ details.name }}</ion-label>\n                    <ion-select okText="Select" cancelText="Cancel" [(ngModel)]="details.paramName">\n                      <ng-container *ngFor="let element of details.elements;">\n                        <ion-option *ngIf="element.enable==1" [value]="element.value">{{ element.name }}</ion-option>\n                        <ion-option *ngIf="element.enable==0" disabled [value]="element.value">{{ element.name }}</ion-option>\n                      </ng-container>\n                    </ion-select>\n                  </ion-item>\n                </ng-container>\n              </ng-container>\n            </div>\n            <button *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="drawDetails($event);">Update</button>\n            <button class ="resetDetails" *ngIf="data.details.detailsOptions" ion-button color="light" (click)="resetDetails($event);">Reset</button>\n            <div *ngIf="data.details.detailsOptions"></div>\n            <button class ="exportDetails" *ngIf="data.details.detailsOptions" ion-button color="danger" (click)="openIn($event);">Export</button>\n          </div>\n        </div>\n      </ion-card-content>\n    </ion-card>\n\n\n</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/fabianoammirata/Dashboard/src/pages/home/home.html"*/
         }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* PopoverController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClient */], __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_social_sharing__["a" /* SocialSharing */]])
+        __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* LoadingController */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* PopoverController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* PopoverController */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavController */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavParams */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClient */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_common_http__["a" /* HttpClient */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__ionic_storage__["b" /* Storage */]) === "function" && _h || Object, typeof (_j = typeof __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* ModalController */]) === "function" && _j || Object, typeof (_k = typeof __WEBPACK_IMPORTED_MODULE_6__ionic_native_social_sharing__["a" /* SocialSharing */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__ionic_native_social_sharing__["a" /* SocialSharing */]) === "function" && _k || Object])
     ], HomePage);
     return HomePage;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
 }());
 
 //# sourceMappingURL=home.js.map
