@@ -220,8 +220,8 @@ export class HomePage {
   getData(mode, tab, id) {
 
     if (mode == "online") {
-      this.http.get("http://127.0.0.1:8080"+tab.url)
-      //this.http.get("http://150.145.114.110:8009"+tab.url)
+      //this.http.get("http://127.0.0.1:8080"+tab.url)
+      this.http.get("http://150.145.114.110:8009"+tab.url)
         .subscribe(
           out => {         
                       

@@ -47,8 +47,8 @@ export class SignInPage {
     var user = this.credentialsForm.value.user;
     var pass = Md5.hashStr(this.credentialsForm.value.password);
         
-    this.http.get("http://127.0.0.1:8081/users/all")
-    //this.http.get("http://150.145.114.110:8008/users/all")
+    //this.http.get("http://127.0.0.1:8081/users/all")
+    this.http.get("http://150.145.114.110:8008/users/all")
 		.subscribe(
 		  out => {
 		  	if (user != "" && pass != "") {
